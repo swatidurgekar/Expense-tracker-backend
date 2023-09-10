@@ -55,6 +55,7 @@ exports.postLoginForm = (req, res, next) => {
     .then((user) => {
       if (foundUser) {
         if (user.password === password) {
+          //   res.json({ message: "user login successfull" });
           res.redirect("/login");
         } else {
           res.status(500).json({ message: "incorrect password" });
