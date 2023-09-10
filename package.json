@@ -1,9 +1,12 @@
 {
   "dependencies": {
+    "body-parser": "^1.20.2",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
+    "mysql2": "^3.6.1",
     "nodemon": "^3.0.1",
-    "react": "^18.2.0"
+    "react": "^18.2.0",
+    "sequelize": "^6.33.0"
   },
   "name": "expense-tracker-backend",
   "version": "1.0.0",
