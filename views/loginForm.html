@@ -4,20 +4,12 @@
     <link rel="stylesheet" href="/css/signUpForm.css" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Expense Tracker</title>
+    <title>Login</title>
   </head>
   <body>
     <div class="form-div">
-      <h1>SignUp</h1>
-      <form action="/user/signUp" method="POST">
-        <label for="name">Name</label>
-        <input
-          placeholder="Type your name"
-          name="name"
-          id="name"
-          type="text"
-          required
-        />
+      <h1>Login</h1>
+      <form action="/user/login" method="POST">
         <label for="username">Username</label>
         <input
           placeholder="Type your username"
@@ -36,8 +28,8 @@
         />
         <button type="submit">Submit</button>
       </form>
-      <p>Already a member?</p>
-      <a href="/login">LOGIN</a>
+      <p>Not a member?</p>
+      <a href="/">SIGN UP</a>
     </div>
   </body>
 </html>

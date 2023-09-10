@@ -49,3 +49,13 @@ button {
   height: 25px;
   align-self: center;
 }
+p {
+  text-align: center;
+  color: gray;
+}
+a {
+  text-decoration: none;
+  margin-left: 35%;
+  color: black;
+  font-size: small;
+}
