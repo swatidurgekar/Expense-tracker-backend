@@ -1,4 +1,3 @@
-const { JSON } = require("sequelize");
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 
@@ -28,18 +27,16 @@ exports.postSignUpForm = (req, res, next) => {
       if (err) {
         throw new Error();
       } else {
-        const creation = User.create({
-          name,
-          username,
-          password: hashValue,
-        })
-          .then(() => {
-            res.redirect("/");
-          })
-
-          .catch((err) => {
-            return res.status(500).json({ message: "user exists" });
+        try {
+          await User.create({
+            name,
+            username,
+            password: hashValue,
           });
+          res.redirect("/login");
+        } catch (err) {
+          res.status(500).json({ message: "user exists" });
+        }
       }
     });
   } catch (err) {
@@ -57,18 +54,14 @@ exports.postLoginForm = async (req, res, next) => {
       return res.status(500).json({ message: "please fill all fields!" });
     }
     const user = await User.findAll({ where: { username } });
-    console.log("user", user);
     if (user.length > 0) {
       if (user[0].username === username) {
         bcrypt.compare(password, user[0].password, (err, result) => {
           if (err)
             return res.status(500).json({ message: "something went wrong" });
           else if (result) {
-            return res
-              .status(200)
-              .json({ success: true, message: "user logged in successfully." });
+            res.redirect("/expense/add-expenses");
           } else {
-            console.log("incorrect password");
             return res.status(500).json({ message: "incorrect password" });
           }
         });

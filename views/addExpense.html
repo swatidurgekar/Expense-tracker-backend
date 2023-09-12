@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Expenses</title>
+    <link rel="stylesheet" href="/css/expenseForm.css" />
+    <!-- <script type="application/javascript" src="expensesTable.js"></script> -->
+  </head>
+  <body>
+    <div class="outer-form-div">
+      <h1>Expense Form</h1>
+      <form action="/expense/postAddExpense" method="POST">
+        <div>
+          <label for="price">Expense Price:</label>
+          <input id="price" type="text" name="price" />
+        </div>
+        <div>
+          <label for="description">Description</label>
+          <input name="description" type="text" id="description" />
+        </div>
+        <div>
+          <label for="category">Category:</label>
+          <select name="category">
+            <option name="">Choose</option>
+            <option name="food">Food</option>
+            <option name="fuel">Fuel</option>
+            <option name="appliances">Appliances</option>
+            <option name="others">Others</option>
+          </select>
+        </div>
+        <button type="submit">Next</button>
+      </form>
+      <div id="expenses-table"></div>
+    </div>
+
+    <!-- <script>
+      const express = import("../models/expenseModel.js");
+      //   console.log(axios);
+      const ele = document.getElementById("expenses-table");
+      async function getExpenses() {
+        const result = await console.log(result);
+      }
+      document.addEventListener("DOMContentLoaded", getExpenses);
+    </script> -->
+  </body>
+</html>

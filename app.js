@@ -1,16 +1,22 @@
 const path = require("path");
 const express = require("express");
-const app = express();
-const userRoutes = require("./Routes/userRoutes");
+
 const sequelize = require("./util/database");
 const bodyParser = require("body-parser");
+
+const app = express();
+
+app.set("views", __dirname + "/views");
+app.engine("html", require("ejs").renderFile);
+// app.use(express.static(path.join(__dirname, "js")));
+
+const userRoutes = require("./Routes/userRoutes");
+const expenseRoutes = require("./Routes/expense");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.set("views", __dirname + "/views");
-app.engine("html", require("ejs").renderFile);
-
+app.use("/expense", expenseRoutes);
 app.use(userRoutes);
 
 sequelize
