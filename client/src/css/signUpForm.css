@@ -1,0 +1,61 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: linear-gradient(
+    to right,
+    rgb(114, 114, 241),
+    rgb(231, 78, 231)
+  );
+}
+.signupform-div {
+  border-radius: 5px;
+  margin: auto auto;
+  width: auto;
+  padding: 25px;
+  background-color: white;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+.signupform-h1 {
+  margin-top: 0;
+  margin-bottom: 25px;
+  text-align: center;
+}
+.signupform-form {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.signupform-input {
+  max-width: fit-content;
+  border: none;
+  border-bottom: 2px solid rgb(175, 174, 174);
+  height: 25px;
+}
+.signupform-button {
+  background-image: linear-gradient(
+    to right,
+    rgb(125, 125, 233),
+    rgb(231, 118, 231)
+  );
+  border: none;
+  border-radius: 5px;
+  margin: 10px;
+  width: 100%;
+  text-align: center;
+  height: 25px;
+  align-self: center;
+}
+.signupform-p {
+  text-align: center;
+  color: gray;
+}
+.signupform-a {
+  text-decoration: none;
+  color: black;
+  font-size: small;
+}

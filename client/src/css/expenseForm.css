@@ -1,0 +1,57 @@
+.expenseform-div {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  background-color: rgb(200, 200, 228);
+  padding: 20px;
+}
+.expenseform-h1 {
+  text-align: center;
+  color: rgb(108, 108, 226);
+}
+.expenseform-form {
+  margin: 0 auto;
+  background-color: rgb(200, 200, 228);
+}
+.expenseform-form-div {
+  margin: 20px;
+  display: block;
+}
+.expenseform-select {
+  width: 170px;
+}
+.expenseform-button {
+  margin-top: 10px;
+  max-width: 80px;
+  height: 30px;
+  background-color: rgb(60, 60, 158);
+  border: none;
+  color: white;
+  align-self: right;
+  margin-left: 80%;
+}
+
+.expenseform-expenses-div {
+  background-color: white;
+  margin: 10px;
+  padding: 20px;
+}
+.expenseform-h2 {
+  margin: 0;
+  margin-bottom: 10px;
+  color: rgb(108, 108, 226);
+}
+.expenseform-table {
+  border: 1px solid gray;
+  border-collapse: collapse;
+}
+.expenseform-table-header {
+  padding: 5px;
+  background-color: rgb(60, 60, 158);
+  color: white;
+  text-align: left;
+}
+
+.expenseform-table-data {
+  border: 1px solid gray;
+  padding: 5px;
+  text-align: left;
+}
