@@ -38,7 +38,7 @@ exports.postSignUpForm = (req, res, next) => {
 };
 
 function generateAccessToken(id) {
-  return jwt.sign({ userId: id }, "8FA41289185F684A4D6F1DCEB2D59");
+  return jwt.sign({ userId: id }, process.env.JWTTOKEN);
 }
 
 exports.postLoginForm = async (req, res, next) => {

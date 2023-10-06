@@ -24,7 +24,7 @@ exports.postAddExpense = async (req, res, next) => {
 exports.getExpenses = async (req, res, next) => {
   const user = req.user;
   const expenses = await user.getExpenses();
-  res.json(expenses);
+  res.json({ expense: expenses });
 };
 
 exports.deleteExpense = async (req, res, next) => {

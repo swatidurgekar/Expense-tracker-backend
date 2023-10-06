@@ -2,9 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import "../css/expenseForm.css";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
+import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
 
 const ExpenseForm = () => {
+  const Razorpay = window.Razorpay;
   const [expenses, setExpenses] = useState([]);
+  const [premium, setPremium] = useState(false);
   const [token, setToken] = useState(localStorage.getItem("token"));
   const pri = useRef();
   const des = useRef();
@@ -17,11 +20,24 @@ const ExpenseForm = () => {
         { headers: { Authorization: token } }
       );
       if (res) {
-        const expenses = res.data;
+        const expenses = res.data.expense;
         setExpenses(expenses);
       }
     }
+
+    async function checkPremium() {
+      const response = await axios.get(
+        "http://localhost:4000/purchase/checkPremium",
+        { headers: { Authorization: token } }
+      );
+      if (response.data) {
+        setPremium(true);
+      } else {
+        setPremium(false);
+      }
+    }
     getExpenses();
+    checkPremium();
   }, [token]);
 
   const deleteExpense = async (id) => {
@@ -52,16 +68,62 @@ const ExpenseForm = () => {
     }
   };
 
+  const buyPremium = async () => {
+    const response = await axios.get(
+      "http://localhost:4000/purchase/buypremium",
+      {
+        headers: { Authorization: token },
+      }
+    );
+    const rzp = new Razorpay({
+      key: response.data.key_id,
+      order_id: response.data.order.id,
+      handler: async function (res) {
+        setPremium(true);
+        alert("Transaction success!!");
+        const successMessage = await axios.post(
+          "http://localhost:4000/purchase/updatePremiumStatus",
+          {
+            order_id: response.data.order.id,
+            payment_id: res.razorpay_payment_id,
+          },
+          { headers: { Authorization: token } }
+        );
+        console.log(successMessage);
+      },
+    });
+    rzp.open();
+    rzp.on("payment.failed", async (res) => {
+      alert("Transaction failed!!");
+      console.log(token);
+      await axios.post(
+        "http://localhost:4000/purchase/transactionFailed",
+        { order_id: response.data.order.id },
+        {
+          headers: { Authorization: token },
+        }
+      );
+    });
+  };
+
   return (
     <>
+      {!premium && (
+        <div className="premium-div">
+          <button onClick={buyPremium} className="premium-btn">
+            Buy Premium
+          </button>
+        </div>
+      )}
+      {premium && (
+        <div className="premium-btn">
+          <WorkspacePremiumIcon style={{ color: "gold", fontSize: "40px" }} />
+          <span className="premium-account">Premium account</span>
+        </div>
+      )}
       <div className="expenseform-div">
         <h1 className="expenseform-h1">Expense Form</h1>
-        <form
-          className="expenseform-form"
-          onSubmit={submitHandler}
-          // action="http://localhost:4000/expense/postAddExpense"
-          // method="POST"
-        >
+        <form className="expenseform-form" onSubmit={submitHandler}>
           <div className="expenseform-form-div">
             <label htmlFor="price">Expense Price:</label>
             <input ref={pri} id="price" type="text" name="price" required />
