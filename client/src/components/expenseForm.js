@@ -9,6 +9,8 @@ const ExpenseForm = () => {
   const [expenses, setExpenses] = useState([]);
   const [premium, setPremium] = useState(false);
   const [token, setToken] = useState(localStorage.getItem("token"));
+  const [leaderboard, setLeaderboard] = useState([]);
+  const [showLeaderboard, setShowLeaderboard] = useState(true);
   const pri = useRef();
   const des = useRef();
   const cat = useRef();
@@ -36,8 +38,34 @@ const ExpenseForm = () => {
         setPremium(false);
       }
     }
+
+    async function leaderboard() {
+      const response = await axios.get(
+        "http://localhost:4000/purchase/leaderboard"
+      );
+      const users = response.data.usersjson;
+      const expenses = response.data.expensesjson;
+      let arr = [];
+      users.map((user) => {
+        const obj = {};
+        obj.name = user.name;
+        const filteredExpenses = expenses.filter(
+          (expense) => expense.userId === user.id
+        );
+        let sum = 0;
+        filteredExpenses.map((filteredExpense) => {
+          sum += filteredExpense.price;
+        });
+        obj.price = sum;
+        arr.push(obj);
+      });
+      arr = arr.sort((a, b) => b.price - a.price);
+      setLeaderboard(arr);
+    }
+
     getExpenses();
     checkPremium();
+    leaderboard();
   }, [token]);
 
   const deleteExpense = async (id) => {
@@ -106,19 +134,43 @@ const ExpenseForm = () => {
     });
   };
 
+  const toggleLeaderboard = () => {
+    setShowLeaderboard((prevValue) => !prevValue);
+  };
+
   return (
     <>
-      {!premium && (
+      <div className="buttons">
+        {!premium && (
+          <div className="premium-div">
+            <button onClick={buyPremium} className="premium-btn">
+              Buy Premium
+            </button>
+          </div>
+        )}
+        {premium && (
+          <div className="premium-btn">
+            <WorkspacePremiumIcon style={{ color: "gold", fontSize: "40px" }} />
+            <span className="premium-account">Premium account</span>
+          </div>
+        )}
         <div className="premium-div">
-          <button onClick={buyPremium} className="premium-btn">
-            Buy Premium
+          <button onClick={toggleLeaderboard} className="premium-btn">
+            {showLeaderboard ? "Hide Leaderboard" : "Show Leaderboard"}
           </button>
         </div>
-      )}
-      {premium && (
-        <div className="premium-btn">
-          <WorkspacePremiumIcon style={{ color: "gold", fontSize: "40px" }} />
-          <span className="premium-account">Premium account</span>
+      </div>
+      {showLeaderboard && (
+        <div className="leaderboard-div">
+          <h2 className="leaderboard-h2">LEADERBOARD</h2>
+          {leaderboard.map((user) => {
+            return (
+              <div className="leaderboard-user">
+                <span className="leaderboard-name">{user.name}</span>
+                <span className="leaderboard-price">{user.price}</span>
+              </div>
+            );
+          })}
         </div>
       )}
       <div className="expenseform-div">

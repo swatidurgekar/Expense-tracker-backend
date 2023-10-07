@@ -1,3 +1,6 @@
+.buttons {
+  display: flex;
+}
 .premium-btn {
   background-color: blueviolet;
   border: none;
@@ -5,12 +8,36 @@
   height: 40px;
   color: white;
   margin-top: 40px;
-  margin-left: 70%;
+  margin-left: 10%;
   margin-bottom: 40px;
   font-size: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.leaderboard-div {
+  margin: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 400px;
+  background-color: rgb(49, 49, 102);
+  padding: 2%;
+  border: 5px solid rgb(221, 221, 238);
+}
+.leaderboard-h2 {
+  margin-top: 0;
+  color: rgb(163, 209, 182);
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+}
+.leaderboard-user {
+  width: auto;
+  background-color: rgb(114, 114, 227);
+  margin: 5px;
+  color: white;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
 }
 .expenseform-div {
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
