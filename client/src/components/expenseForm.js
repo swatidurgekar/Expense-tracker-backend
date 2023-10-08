@@ -3,6 +3,7 @@ import "../css/expenseForm.css";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 const ExpenseForm = () => {
   const Razorpay = window.Razorpay;
@@ -10,7 +11,7 @@ const ExpenseForm = () => {
   const [premium, setPremium] = useState(false);
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [leaderboard, setLeaderboard] = useState([]);
-  const [showLeaderboard, setShowLeaderboard] = useState(true);
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
   const pri = useRef();
   const des = useRef();
   const cat = useRef();
@@ -39,42 +40,27 @@ const ExpenseForm = () => {
       }
     }
 
-    async function leaderboard() {
-      const response = await axios.get(
-        "http://localhost:4000/purchase/leaderboard"
-      );
-      const users = response.data.usersjson;
-      const expenses = response.data.expensesjson;
-      let arr = [];
-      users.map((user) => {
-        const obj = {};
-        obj.name = user.name;
-        const filteredExpenses = expenses.filter(
-          (expense) => expense.userId === user.id
-        );
-        let sum = 0;
-        filteredExpenses.map((filteredExpense) => {
-          sum += filteredExpense.price;
-        });
-        obj.price = sum;
-        arr.push(obj);
-      });
-      arr = arr.sort((a, b) => b.price - a.price);
-      setLeaderboard(arr);
-    }
-
     getExpenses();
     checkPremium();
-    leaderboard();
+    leaderboardFunc();
   }, [token]);
+
+  async function leaderboardFunc() {
+    const response = await axios.get(
+      "http://localhost:4000/purchase/leaderboard"
+    );
+    const arr = response.data;
+    setLeaderboard(arr);
+  }
 
   const deleteExpense = async (id) => {
     const res = await axios.get(
       `http://localhost:4000/expense/delete-expense/${id}`,
       { headers: { Authorization: token } }
     );
-    const expenses = await res.data;
-    setExpenses(expenses);
+    const remexpenses = await res.data;
+    setExpenses(remexpenses);
+    leaderboardFunc();
   };
 
   const submitHandler = async (e) => {
@@ -93,6 +79,7 @@ const ExpenseForm = () => {
     if (res) {
       const expenses = res.data;
       setExpenses(expenses);
+      leaderboardFunc();
     }
   };
 
@@ -165,9 +152,9 @@ const ExpenseForm = () => {
           <h2 className="leaderboard-h2">LEADERBOARD</h2>
           {leaderboard.map((user) => {
             return (
-              <div className="leaderboard-user">
+              <div key={user.id} className="leaderboard-user">
                 <span className="leaderboard-name">{user.name}</span>
-                <span className="leaderboard-price">{user.price}</span>
+                <span className="leaderboard-price">{user.cost}</span>
               </div>
             );
           })}
