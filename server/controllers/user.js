@@ -25,6 +25,7 @@ exports.postSignUpForm = (req, res, next) => {
             name,
             username,
             password: hashValue,
+            totalExpense: 0,
           });
           res.redirect("http://localhost:3000/login");
         } catch (err) {

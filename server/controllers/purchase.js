@@ -1,5 +1,6 @@
 const razorpay = require("razorpay");
 const Order = require("../models/orderModel");
+const sequelize = require("../util/database");
 
 exports.buyPremium = (req, res, next) => {
   let rzp = new razorpay({
@@ -19,13 +20,26 @@ exports.buyPremium = (req, res, next) => {
 
 exports.updatePremiumStatus = async (req, res, next) => {
   const { order_id, payment_id } = req.body;
-  const order = await Order.findOne({ where: { orderId: order_id } });
-  const updatePayment = order.update({
-    paymentId: payment_id,
-    status: "SUCCESS",
-  });
-  const updatePremium = req.user.update({ isPremiumUser: true });
-  await Promise.all([updatePayment, updatePremium]);
+  const t = await sequelize.transaction();
+  try {
+    const order = await Order.findOne({ where: { orderId: order_id } });
+    const updatePayment = order.update(
+      {
+        paymentId: payment_id,
+        status: "SUCCESS",
+      },
+      { transaction: t }
+    );
+    const updatePremium = req.user.update(
+      { isPremiumUser: true },
+      { transaction: t }
+    );
+    await Promise.all([updatePayment, updatePremium]);
+    await t.commit();
+  } catch (err) {
+    await t.rollback();
+    console.log(err);
+  }
 };
 
 exports.transactionFailed = async (req, res, next) => {
