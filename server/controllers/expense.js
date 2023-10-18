@@ -1,8 +1,9 @@
 const Expense = require("../models/expenseModel");
+const User = require("../models/userModel");
 
 exports.postAddExpense = async (req, res, next) => {
   try {
-    const userId = req.user.id;
+    const user = req.user;
     const { price, description, category } = req.body;
     if (!price || !description || !category) {
       res.status(500).json({ message: "please fill all details." });
@@ -11,8 +12,17 @@ exports.postAddExpense = async (req, res, next) => {
         price,
         description,
         category,
-        userId,
+        userId: user.id,
       });
+      if (!user.totalExpense) {
+        user.update({
+          totalExpense: req.body.price,
+        });
+      } else {
+        user.update({
+          totalExpense: user.totalExpense + Number(req.body.price),
+        });
+      }
       const expenses = await req.user.getExpenses();
       res.json(expenses);
     }
@@ -32,6 +42,7 @@ exports.deleteExpense = async (req, res, next) => {
   const id = req.params.id;
   const expense = await Expense.findByPk(id);
   if (user.id === expense.userId) {
+    user.update({ totalExpense: user.totalExpense - expense.price });
     await expense.destroy();
     const expenses = await user.getExpenses();
     res.json(expenses);

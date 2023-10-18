@@ -7,11 +7,12 @@ exports.leaderboard = async (req, res, next) => {
     attributes: [
       "id",
       "name",
-      [sequelize.fn("sum", sequelize.col("expenses.price")), "cost"],
+      "totalExpense",
+      // [sequelize.fn("sum", sequelize.col("expenses.price")), "cost"],
     ],
-    include: [{ model: Expense, attributes: [] }],
-    group: ["user.Id"],
-    order: [["cost", "DESC"]],
+    // include: [{ model: Expense, attributes: [] }],
+    // group: ["user.Id"],
+    order: [["totalExpense", "DESC"]],
   });
   res.json(users);
 };
