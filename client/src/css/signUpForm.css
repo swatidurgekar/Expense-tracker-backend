@@ -46,9 +46,23 @@ body {
   border-radius: 5px;
   margin: 10px;
   width: 100%;
-  text-align: center;
   height: 25px;
-  align-self: center;
+  color: white;
+}
+.forgotPassword-btn {
+  background-image: linear-gradient(
+    to right,
+    rgb(117 113 241),
+    rgb(231, 78, 231)
+  );
+  border-radius: 5px;
+  padding: 0.2em;
+  color: white;
+  font-size: 0.9em;
+  text-decoration: none;
+}
+.forgotPassword-btn:hover {
+  cursor: pointer;
 }
 .signupform-p {
   text-align: center;

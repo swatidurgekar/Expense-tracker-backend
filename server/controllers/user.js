@@ -44,7 +44,6 @@ function generateAccessToken(id) {
 
 exports.postLoginForm = async (req, res, next) => {
   try {
-    console.log(req.body);
     const { username, password } = req.body;
 
     const stringValidation = (string) => {

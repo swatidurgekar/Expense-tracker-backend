@@ -14,6 +14,7 @@ app.engine("html", require("ejs").renderFile);
 const userRoutes = require("./Routes/userRoutes");
 const expenseRoutes = require("./Routes/expense");
 const purchaseRoutes = require("./Routes/purchaseRoutes");
+const passwordRoutes = require("./Routes/forgotPassword");
 const Expense = require("./models/expenseModel");
 const User = require("./models/userModel");
 const Order = require("./models/orderModel");
@@ -25,6 +26,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/expense", expenseRoutes);
 app.use("/purchase", purchaseRoutes);
+app.use("/password", passwordRoutes);
 app.use(userRoutes);
 
 User.hasMany(Expense);

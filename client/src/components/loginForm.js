@@ -49,6 +49,9 @@ const LoginForm = () => {
             Submit
           </button>
         </form>
+        <a href="/forgotPassword" className="forgotPassword-btn">
+          Forgot password ?
+        </a>
         <p className="signupform-p">Not a member?</p>
         <a className="signupform-a" href="/">
           SIGN UP

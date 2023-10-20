@@ -154,7 +154,7 @@ const ExpenseForm = () => {
             return (
               <div key={user.id} className="leaderboard-user">
                 <span className="leaderboard-name">{user.name}</span>
-                <span className="leaderboard-price">{user.cost}</span>
+                <span className="leaderboard-price">{user.totalExpense}</span>
               </div>
             );
           })}
