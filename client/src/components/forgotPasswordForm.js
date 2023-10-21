@@ -1,19 +1,23 @@
 import axios from "axios";
 import "../css/forgotPasswordForm.css";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 const ForgotPasswordForm = () => {
   const emailRef = useRef();
+  const [token, setToken] = useState(localStorage.getItem("token"));
 
   const submitHandler = async (event) => {
     event.preventDefault();
     const email = emailRef.current.value;
     const res = await axios.post(
       "http://localhost:4000/password/forgotPassword",
-      { email }
+      { email },
+      { headers: { Authorization: token } }
     );
     if (res.data) {
       alert("Email successfully sent to your mailId!");
+    } else {
+      alert("Email does not exist");
     }
   };
 

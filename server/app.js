@@ -18,6 +18,7 @@ const passwordRoutes = require("./Routes/forgotPassword");
 const Expense = require("./models/expenseModel");
 const User = require("./models/userModel");
 const Order = require("./models/orderModel");
+const ResetPassword = require("./models/passwordModel");
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -34,6 +35,9 @@ Expense.belongsTo(User);
 
 User.hasMany(Order);
 Order.belongsTo(User);
+
+User.hasMany(ResetPassword);
+ResetPassword.belongsTo(User);
 
 sequelize
   .sync()
