@@ -1,0 +1,63 @@
+.dailyExpenses {
+  background-color: white;
+  height: 100vh;
+}
+.header {
+  background-image: linear-gradient(
+    to right,
+    rgb(125, 125, 233),
+    rgb(231, 118, 231)
+  );
+  display: flex;
+  color: white;
+  padding: 0.5em;
+}
+.header p {
+  font-size: 2em;
+  font-weight: 400;
+}
+.innerdiv {
+  padding: 1em;
+}
+.filter {
+  background-color: rgb(200, 200, 228);
+  display: flex;
+  flex-direction: row;
+  padding: 1em;
+  height: 8em;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.totalExpenses div:nth-child(1) {
+  padding: 0 1em;
+  color: rgb(60, 60, 158);
+  font-weight: 400;
+  font-size: 1em;
+}
+.totalExpenses div:nth-child(2) {
+  color: rgb(60, 60, 158);
+  font-weight: bold;
+  font-size: 2em;
+}
+.filter div button {
+  background-color: blueviolet;
+  color: white;
+  width: 5.7em;
+  height: 3em;
+  text-align: left;
+  border: none;
+  margin: 1em 0.5em 0 0;
+}
+.expenseTable {
+  width: 100%;
+  margin: 0.5em 0 0 0;
+  border-collapse: collapse;
+}
+tr:nth-child(n):hover {
+  background-color: rgb(200, 200, 228);
+}
+.expenseTable tbody tr :last-child {
+  background-color: rgb(200, 200, 228);
+  display: flex;
+  justify-content: flex-end;
+}

@@ -7,10 +7,6 @@ const Password = sequelize.define("password", {
     allowNull: false,
     primaryKey: true,
   },
-  //   userId: {
-  //     type: Sequelize.INTEGER,
-  //     allowNull: false,
-  //   },
   isActive: Sequelize.BOOLEAN,
 });
 

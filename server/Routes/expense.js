@@ -15,4 +15,5 @@ router.get(
   authentication,
   expenseController.deleteExpense
 );
+router.get("/daily-expenses", expenseController.dailyExpenses);
 module.exports = router;

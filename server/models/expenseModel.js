@@ -20,6 +20,7 @@ const Expense = sequelize.define("expenses", {
     type: Sequelize.STRING,
     allowNull: false,
   },
+  date: Sequelize.DATE,
 });
 
 module.exports = Expense;

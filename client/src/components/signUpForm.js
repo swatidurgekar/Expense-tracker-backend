@@ -23,7 +23,7 @@ const SignUpForm = () => {
           <input
             className="signupform-input"
             placeholder="Type your username"
-            type="text"
+            type="email"
             id="username"
             name="username"
             required

@@ -3,18 +3,22 @@ import "../css/expenseForm.css";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { useSelector, useDispatch } from "react-redux";
+import { expenseActions, premiumActions } from "../store/Premium";
+import { useNavigate } from "react-router";
 
 const ExpenseForm = () => {
   const Razorpay = window.Razorpay;
-  const [expenses, setExpenses] = useState([]);
-  const [premium, setPremium] = useState(false);
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  const expenses = useSelector((state) => state.expense.expenses);
+  const premium = useSelector((state) => state.premium.isPremiumUser);
+  const token = localStorage.getItem("token");
   const [leaderboard, setLeaderboard] = useState([]);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const pri = useRef();
   const des = useRef();
   const cat = useRef();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function getExpenses() {
@@ -24,7 +28,7 @@ const ExpenseForm = () => {
       );
       if (res) {
         const expenses = res.data.expense;
-        setExpenses(expenses);
+        dispatch(expenseActions.setExpenses(expenses));
       }
     }
 
@@ -34,9 +38,9 @@ const ExpenseForm = () => {
         { headers: { Authorization: token } }
       );
       if (response.data) {
-        setPremium(true);
+        dispatch(premiumActions.setPremium(true));
       } else {
-        setPremium(false);
+        dispatch(premiumActions.setPremium(false));
       }
     }
 
@@ -59,7 +63,7 @@ const ExpenseForm = () => {
       { headers: { Authorization: token } }
     );
     const remexpenses = await res.data;
-    setExpenses(remexpenses);
+    dispatch(expenseActions.setExpenses(remexpenses));
     leaderboardFunc();
   };
 
@@ -68,7 +72,10 @@ const ExpenseForm = () => {
     const price = pri.current.value;
     const description = des.current.value;
     const category = cat.current.value;
-    const obj = { price, description, category };
+    const date = new Date();
+    // date.setHours(0, 0, 0, 1);
+    console.log(date);
+    const obj = { price, description, category, date };
     const res = await axios.post(
       "http://localhost:4000/expense/postAddExpense",
       obj,
@@ -78,7 +85,7 @@ const ExpenseForm = () => {
     );
     if (res) {
       const expenses = res.data;
-      setExpenses(expenses);
+      dispatch(expenseActions.setExpenses(expenses));
       leaderboardFunc();
     }
   };
@@ -94,7 +101,7 @@ const ExpenseForm = () => {
       key: response.data.key_id,
       order_id: response.data.order.id,
       handler: async function (res) {
-        setPremium(true);
+        dispatch(premiumActions.setPremium(true));
         alert("Transaction success!!");
         const successMessage = await axios.post(
           "http://localhost:4000/purchase/updatePremiumStatus",
@@ -125,21 +132,42 @@ const ExpenseForm = () => {
     setShowLeaderboard((prevValue) => !prevValue);
   };
 
+  const dailyExpenses = () => {
+    navigate("/expense/daily-expenses");
+  };
+
+  const download = (rows) => {
+    const arr = [];
+    rows.map((element) => {
+      arr.push([JSON.stringify(element)]);
+    });
+    return arr.map((exp) => exp.join(",")).join("\n");
+  };
+  const blob = new Blob([download(expenses)]);
+  const href = URL.createObjectURL(blob);
+
   return (
     <>
       <div className="buttons">
         {!premium && (
-          <div className="premium-div">
-            <button onClick={buyPremium} className="premium-btn">
-              Buy Premium
-            </button>
+          <div className="premium-btn">
+            <button onClick={buyPremium}>Buy Premium</button>
           </div>
         )}
         {premium && (
-          <div className="premium-btn">
-            <WorkspacePremiumIcon style={{ color: "gold", fontSize: "40px" }} />
-            <span className="premium-account">Premium account</span>
-          </div>
+          <>
+            <div className="premium-btn">
+              <WorkspacePremiumIcon
+                style={{ color: "gold", fontSize: "40px" }}
+              />
+              <span className="premium-account">Premium account</span>
+            </div>
+            <div className="premium-btn">
+              <span onClick={dailyExpenses} className="daily-expenses">
+                Daily expense sheet
+              </span>
+            </div>
+          </>
         )}
         <div className="premium-div">
           <button onClick={toggleLeaderboard} className="premium-btn">
@@ -192,43 +220,50 @@ const ExpenseForm = () => {
         </form>
       </div>
       <div className="expenseform-expenses-div">
-        <h2 className="expenseform-h2">Expenses</h2>
-        <table className="expenseform-table">
-          <thead>
-            <tr className="expenseform-table-row">
-              <th className="expenseform-table-header">Date</th>
-              <th className="expenseform-table-header">Description</th>
-              <th className="expenseform-table-header">Category</th>
-              <th className="expenseform-table-header">Price</th>
-              <th className="expenseform-table-header">Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-            {expenses.map((expense) => {
-              const date = expense.createdAt.split(/[A-Z]/g)[0];
-              return (
-                <tr key={expense.id} className="expenseform-table-row">
-                  <td className="expenseform-table-data">{date}</td>
+        <div>
+          <h2 className="expenseform-h2">Expenses</h2>
+          <table className="expenseform-table">
+            <thead>
+              <tr className="expenseform-table-row">
+                <th className="expenseform-table-header">Description</th>
+                <th className="expenseform-table-header">Category</th>
+                <th className="expenseform-table-header">Price</th>
+                <th className="expenseform-table-header">Delete</th>
+              </tr>
+            </thead>
+            <tbody>
+              {expenses.map((expense) => {
+                // const date = expense.createdAt.split(/[A-Z]/g)[0];
+                return (
+                  <tr key={expense.id} className="expenseform-table-row">
+                    <td className="expenseform-table-data">
+                      {expense.description}
+                    </td>
 
-                  <td className="expenseform-table-data">
-                    {expense.description}
-                  </td>
+                    <td className="expenseform-table-data">
+                      {expense.category}
+                    </td>
 
-                  <td className="expenseform-table-data">{expense.category}</td>
+                    <td className="expenseform-table-data">{expense.price}</td>
 
-                  <td className="expenseform-table-data">{expense.price}</td>
+                    <td
+                      onClick={() => deleteExpense(expense.id)}
+                      className="expenseform-table-data"
+                    >
+                      <DeleteIcon style={{ color: "red" }} />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
 
-                  <td
-                    onClick={() => deleteExpense(expense.id)}
-                    className="expenseform-table-data"
-                  >
-                    <DeleteIcon style={{ color: "red" }} />
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        {premium && (
+          <a href={href} download="expenses.csv">
+            Download
+          </a>
+        )}
       </div>
     </>
   );

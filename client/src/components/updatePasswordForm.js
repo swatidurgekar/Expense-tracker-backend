@@ -1,8 +1,6 @@
 import { useParams } from "react-router";
 import "../css/updatePasswordForm.css";
 import { useRef } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 const UpdatePasswordForm = () => {
   const params = useParams();

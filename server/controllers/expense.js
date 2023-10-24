@@ -6,7 +6,7 @@ exports.postAddExpense = async (req, res, next) => {
   const t = await sequelize.transaction();
   try {
     const user = req.user;
-    const { price, description, category } = req.body;
+    const { price, description, category, date } = req.body;
     if (!price || !description || !category) {
       res.status(500).json({ message: "please fill all details." });
     } else {
@@ -15,6 +15,7 @@ exports.postAddExpense = async (req, res, next) => {
           price,
           description,
           category,
+          date,
           userId: user.id,
         },
         { transaction: t }
@@ -62,6 +63,15 @@ exports.deleteExpense = async (req, res, next) => {
     }
   } catch (err) {
     await t.rollback();
+    console.log(err);
+  }
+};
+
+exports.dailyExpenses = (req, res, next) => {
+  try {
+    console.log("redirect");
+    res.status(200).redirect("http://localhost:3000/expense/daily-expenses");
+  } catch (err) {
     console.log(err);
   }
 };
