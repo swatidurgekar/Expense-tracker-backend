@@ -1,0 +1,37 @@
+.downloads {
+  background-color: white;
+  height: 100vh;
+}
+.downloads header {
+  background-color: rgb(125, 125, 233);
+  height: 2em;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1em;
+  display: flex;
+  padding: 1em;
+}
+.downloads main {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 1em;
+  background-color: lightgray;
+}
+.main div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.main div div div:nth-child(1) {
+  margin: 1em 0;
+}
+.url {
+  background-color: white;
+  font-size: 0.8em;
+  padding: 1em;
+}
+.url a {
+  margin: 0.4em 0;
+  text-decoration: none;
+}

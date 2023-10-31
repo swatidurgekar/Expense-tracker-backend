@@ -1,12 +1,11 @@
-import axios from "axios";
 import styles from "../css/dailyExpenses.module.css";
 import { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 
 const DailyExpenses = () => {
-  const [expenses, setExpenses] = useState([]);
-  const [filterExpenses, setFilterExpenses] = useState([]);
+  const expenses = useSelector((state) => state.expense.expenses);
+  const [filterExpenses, setFilterExpenses] = useState(expenses);
   let sum = 0;
-  const token = localStorage.getItem("token");
   const date = useRef();
   const days = {
     0: "Sunday",
@@ -33,18 +32,8 @@ const DailyExpenses = () => {
   };
 
   useEffect(() => {
-    async function getExpenses() {
-      const res = await axios.get(
-        "http://localhost:4000/expense/get-expenses",
-        { headers: { Authorization: token } }
-      );
-      if (res) {
-        const expenses = res.data.expense;
-        setExpenses(expenses);
-      }
-    }
-    getExpenses();
-  }, []);
+    setFilterExpenses(expenses);
+  }, [expenses]);
 
   filterExpenses.forEach((expense) => {
     sum += expense.price;
@@ -59,7 +48,7 @@ const DailyExpenses = () => {
     const filteredExpenses = expenses.filter((expense) => {
       const expenseDate = extractDate(expense.date);
       return (
-        newFilteredDate.getDate() == expenseDate.getDate() &&
+        newFilteredDate.getDate() === expenseDate.getDate() &&
         newFilteredDate.getMonth() === expenseDate.getMonth() &&
         newFilteredDate.getFullYear() === expenseDate.getFullYear()
       );
@@ -129,7 +118,6 @@ const DailyExpenses = () => {
             <tbody>
               {filterExpenses.map((expense) => {
                 const date = extractDate(expense.date);
-                // const date = expense.createdAt.split(/[A-Z]/g)[0];
                 return (
                   <tr key={expense.id} className="expenseform-table-row">
                     <td className="expenseform-table-data">{date.getDate()}</td>

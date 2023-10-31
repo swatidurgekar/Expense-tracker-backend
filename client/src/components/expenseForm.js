@@ -5,7 +5,7 @@ import axios from "axios";
 import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
 import { useSelector, useDispatch } from "react-redux";
 import { expenseActions, premiumActions } from "../store/Premium";
-import { useNavigate } from "react-router";
+import { NavLink } from "react-router-dom";
 
 const ExpenseForm = () => {
   const Razorpay = window.Razorpay;
@@ -18,36 +18,10 @@ const ExpenseForm = () => {
   const des = useRef();
   const cat = useRef();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   useEffect(() => {
-    async function getExpenses() {
-      const res = await axios.get(
-        "http://localhost:4000/expense/get-expenses",
-        { headers: { Authorization: token } }
-      );
-      if (res) {
-        const expenses = res.data.expense;
-        dispatch(expenseActions.setExpenses(expenses));
-      }
-    }
-
-    async function checkPremium() {
-      const response = await axios.get(
-        "http://localhost:4000/purchase/checkPremium",
-        { headers: { Authorization: token } }
-      );
-      if (response.data) {
-        dispatch(premiumActions.setPremium(true));
-      } else {
-        dispatch(premiumActions.setPremium(false));
-      }
-    }
-
-    getExpenses();
-    checkPremium();
     leaderboardFunc();
-  }, [token]);
+  }, [token, dispatch]);
 
   async function leaderboardFunc() {
     const response = await axios.get(
@@ -73,7 +47,6 @@ const ExpenseForm = () => {
     const description = des.current.value;
     const category = cat.current.value;
     const date = new Date();
-    // date.setHours(0, 0, 0, 1);
     console.log(date);
     const obj = { price, description, category, date };
     const res = await axios.post(
@@ -117,7 +90,6 @@ const ExpenseForm = () => {
     rzp.open();
     rzp.on("payment.failed", async (res) => {
       alert("Transaction failed!!");
-      console.log(token);
       await axios.post(
         "http://localhost:4000/purchase/transactionFailed",
         { order_id: response.data.order.id },
@@ -132,19 +104,23 @@ const ExpenseForm = () => {
     setShowLeaderboard((prevValue) => !prevValue);
   };
 
-  const dailyExpenses = () => {
-    navigate("/expense/daily-expenses");
-  };
-
-  const download = (rows) => {
-    const arr = [];
-    rows.map((element) => {
-      arr.push([JSON.stringify(element)]);
+  const download = async (event) => {
+    const res = await axios.get("http://localhost:4000/expense/download", {
+      headers: { Authorization: token },
     });
-    return arr.map((exp) => exp.join(",")).join("\n");
+    try {
+      if (res.status === 200) {
+        const a = document.createElement("a");
+        a.href = res.data.fileURL;
+        a.download = "myexpenses.csv";
+        a.click();
+      } else {
+        throw new Error(res.data.message);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
-  const blob = new Blob([download(expenses)]);
-  const href = URL.createObjectURL(blob);
 
   return (
     <>
@@ -162,38 +138,42 @@ const ExpenseForm = () => {
               />
               <span className="premium-account">Premium account</span>
             </div>
-            <div className="premium-btn">
-              <span onClick={dailyExpenses} className="daily-expenses">
-                Daily expense sheet
-              </span>
-            </div>
+
+            <NavLink to="/expense/daily-expenses" className="premium-btn">
+              Daily expense sheet
+            </NavLink>
+
+            <NavLink to="/expense/downloads" className="premium-btn">
+              Downloads
+            </NavLink>
           </>
         )}
-        <div className="premium-div">
-          <button onClick={toggleLeaderboard} className="premium-btn">
+        <div className="premium-btn">
+          <button onClick={toggleLeaderboard}>
             {showLeaderboard ? "Hide Leaderboard" : "Show Leaderboard"}
           </button>
         </div>
+
+        {showLeaderboard && (
+          <div className="leaderboard-div">
+            <h2 className="leaderboard-h2">LEADERBOARD</h2>
+            {leaderboard.map((user) => {
+              return (
+                <div key={user.id} className="leaderboard-user">
+                  <span className="leaderboard-name">{user.name}</span>
+                  <span className="leaderboard-price">{user.totalExpense}</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
-      {showLeaderboard && (
-        <div className="leaderboard-div">
-          <h2 className="leaderboard-h2">LEADERBOARD</h2>
-          {leaderboard.map((user) => {
-            return (
-              <div key={user.id} className="leaderboard-user">
-                <span className="leaderboard-name">{user.name}</span>
-                <span className="leaderboard-price">{user.totalExpense}</span>
-              </div>
-            );
-          })}
-        </div>
-      )}
       <div className="expenseform-div">
         <h1 className="expenseform-h1">Expense Form</h1>
         <form className="expenseform-form" onSubmit={submitHandler}>
           <div className="expenseform-form-div">
             <label htmlFor="price">Expense Price:</label>
-            <input ref={pri} id="price" type="text" name="price" required />
+            <input ref={pri} id="price" type="number" name="price" required />
           </div>
           <div className="expenseform-form-div">
             <label htmlFor="description">Description</label>
@@ -233,7 +213,6 @@ const ExpenseForm = () => {
             </thead>
             <tbody>
               {expenses.map((expense) => {
-                // const date = expense.createdAt.split(/[A-Z]/g)[0];
                 return (
                   <tr key={expense.id} className="expenseform-table-row">
                     <td className="expenseform-table-data">
@@ -258,12 +237,7 @@ const ExpenseForm = () => {
             </tbody>
           </table>
         </div>
-
-        {premium && (
-          <a href={href} download="expenses.csv">
-            Download
-          </a>
-        )}
+        {premium && <button onClick={download}>Download</button>}
       </div>
     </>
   );

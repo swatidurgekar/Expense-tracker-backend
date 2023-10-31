@@ -2,6 +2,7 @@ const { createSlice } = require("@reduxjs/toolkit");
 
 const initialState = {
   isPremiumUser: false,
+  expenses: [],
 };
 
 const premiumSlice = createSlice({
@@ -16,7 +17,7 @@ const premiumSlice = createSlice({
 
 const expenseSlice = createSlice({
   name: "expense",
-  initialState: { expenses: [] },
+  initialState,
   reducers: {
     setExpenses(state, action) {
       state.expenses = action.payload;

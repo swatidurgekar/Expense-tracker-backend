@@ -19,6 +19,7 @@ const Expense = require("./models/expenseModel");
 const User = require("./models/userModel");
 const Order = require("./models/orderModel");
 const ResetPassword = require("./models/passwordModel");
+const Download = require("./models/downloadModel");
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -38,6 +39,9 @@ Order.belongsTo(User);
 
 User.hasMany(ResetPassword);
 ResetPassword.belongsTo(User);
+
+User.hasMany(Download);
+Download.belongsTo(User);
 
 sequelize
   .sync()

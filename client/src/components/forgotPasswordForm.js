@@ -1,10 +1,10 @@
 import axios from "axios";
 import "../css/forgotPasswordForm.css";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 
 const ForgotPasswordForm = () => {
   const emailRef = useRef();
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  const token = localStorage.getItem("token");
 
   const submitHandler = async (event) => {
     event.preventDefault();

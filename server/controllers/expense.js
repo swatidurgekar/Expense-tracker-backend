@@ -1,5 +1,4 @@
 const Expense = require("../models/expenseModel");
-const User = require("../models/userModel");
 const sequelize = require("../util/database");
 
 exports.postAddExpense = async (req, res, next) => {
@@ -40,8 +39,10 @@ exports.postAddExpense = async (req, res, next) => {
 
 exports.getExpenses = async (req, res, next) => {
   const user = req.user;
-  const expenses = await user.getExpenses();
-  res.json({ expense: expenses });
+  if (user) {
+    const expenses = await user.getExpenses();
+    res.json({ expense: expenses });
+  }
 };
 
 exports.deleteExpense = async (req, res, next) => {

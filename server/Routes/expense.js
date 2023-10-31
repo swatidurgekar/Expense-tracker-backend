@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const expenseController = require("../controllers/expense");
 const authentication = require("../middleware/auth");
+const downloadExpenseController = require("../controllers/downloadExpense");
 
 router.post(
   "/postAddExpense",
@@ -16,4 +17,14 @@ router.get(
   expenseController.deleteExpense
 );
 router.get("/daily-expenses", expenseController.dailyExpenses);
+router.get(
+  "/download",
+  authentication,
+  downloadExpenseController.downloadExpense
+);
+router.get(
+  "/get-download",
+  authentication,
+  downloadExpenseController.getDownloadExpenses
+);
 module.exports = router;

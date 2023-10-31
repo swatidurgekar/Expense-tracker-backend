@@ -8,11 +8,11 @@ exports.buyPremium = (req, res, next) => {
     key_secret: process.env.RAZORPAY_KEY_SECRET,
   });
   const amount = 2500;
-  rzp.orders.create({ amount, currency: "INR" }, (err, order) => {
+  rzp.orders.create({ amount, currency: "INR" }, async (err, order) => {
     if (err) {
       console.log(err);
     } else {
-      req.user.createOrder({ orderId: order.id, status: "PENDING" });
+      await req.user.createOrder({ orderId: order.id, status: "PENDING" });
       res.json({ order, key_id: rzp.key_id });
     }
   });

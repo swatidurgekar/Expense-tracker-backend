@@ -8,17 +8,28 @@
   height: 40px;
   color: white;
   margin-top: 40px;
-  margin-left: 10%;
+  margin-left: 2%;
   margin-bottom: 40px;
-  font-size: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 0.85em;
+  text-decoration: none;
+}
+
+.daily-expenses {
+  background-color: blueviolet;
+  border: none;
+  color: white;
+  text-decoration: none;
 }
 .premium-btn button {
   background-color: blueviolet;
   border: none;
   color: white;
+}
+.premium-btn button:hover {
+  cursor: pointer;
 }
 .premium-btn:hover {
   cursor: pointer;
