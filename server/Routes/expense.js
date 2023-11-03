@@ -31,8 +31,8 @@ router.post(
   authentication,
   filterExpenseController.filterby
 );
-router.get("/countExpense", authentication, expenseController.countExpenses);
-router.get(
+router.post("/countExpense", authentication, expenseController.countExpenses);
+router.post(
   "/pagination/:page",
   authentication,
   expenseController.paginatingExpenses

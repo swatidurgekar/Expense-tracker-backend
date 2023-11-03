@@ -1,10 +1,12 @@
 const { createSlice } = require("@reduxjs/toolkit");
+const rows = localStorage.getItem("rows");
 
 const initialState = {
   isPremiumUser: false,
   expenses: [],
   pages: 0,
   page: 1,
+  rows: rows ? rows : 10,
 };
 
 const premiumSlice = createSlice({
@@ -29,6 +31,9 @@ const expenseSlice = createSlice({
     },
     setPage(state, action) {
       state.page = action.payload;
+    },
+    setRows(state, action) {
+      state.rows = action.payload;
     },
   },
 });

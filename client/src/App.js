@@ -16,13 +16,18 @@ function App() {
   const premium = useSelector((state) => state.premium.isPremiumUser);
   const dispatch = useDispatch();
   const token = localStorage.getItem("token");
+  const rows = useSelector((state) => state.expense.rows);
 
   useEffect(() => {
+    if (!rows) {
+      localStorage.setItem("rows", 10);
+    }
     if (token) {
       dispatch(expenseActions.setPage(1));
       async function getExpenses() {
-        const res = await axios.get(
+        const res = await axios.post(
           `http://localhost:4000/expense/pagination/1`,
+          { rows },
           { headers: { Authorization: token } }
         );
         if (res && res.data && res.data.expensesSlice) {

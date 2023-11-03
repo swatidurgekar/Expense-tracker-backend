@@ -13,6 +13,7 @@ const ExpenseForm = () => {
   const expenses = useSelector((state) => state.expense.expenses);
   const premium = useSelector((state) => state.premium.isPremiumUser);
   const page = useSelector((state) => state.expense.page);
+  const rows = useSelector((state) => state.expense.rows);
   const token = localStorage.getItem("token");
   const [leaderboard, setLeaderboard] = useState([]);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
@@ -23,13 +24,14 @@ const ExpenseForm = () => {
 
   useEffect(() => {
     leaderboardFunc();
-
+    paginatingExpenses();
     countExpenses();
-  }, [token, dispatch]);
+  }, [token, dispatch, rows]);
 
   async function countExpenses() {
-    const response = await axios.get(
+    const response = await axios.post(
       "http://localhost:4000/expense/countExpense",
+      { rows },
       { headers: { Authorization: token } }
     );
     const pages = response.data.pages;
@@ -45,8 +47,9 @@ const ExpenseForm = () => {
   }
 
   const paginatingExpenses = async () => {
-    const res = await axios.get(
+    const res = await axios.post(
       `http://localhost:4000/expense/pagination/${page}`,
+      { rows },
       { headers: { Authorization: token } }
     );
     dispatch(expenseActions.setExpenses(res.data.expensesSlice));

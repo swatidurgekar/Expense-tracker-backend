@@ -60,14 +60,16 @@ exports.deleteExpense = async (req, res, next) => {
 };
 
 exports.countExpenses = async (req, res, next) => {
+  const { rows } = req.body;
   const expenses = await UserServices.getExpenses(req);
-  const pages = Math.ceil(expenses.length / 10);
+  const pages = Math.ceil(expenses.length / rows);
   res.json({ pages });
 };
 
 exports.paginatingExpenses = async (req, res, next) => {
   const { page } = req.params;
+  const { rows } = req.body;
   const expenses = await UserServices.getExpenses(req);
-  const expensesSlice = expenses.slice((page - 1) * 10, page * 10);
+  const expensesSlice = expenses.slice((page - 1) * rows, page * rows);
   res.json({ expensesSlice });
 };

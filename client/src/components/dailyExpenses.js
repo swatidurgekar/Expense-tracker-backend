@@ -1,13 +1,16 @@
 import styles from "../css/dailyExpenses.module.css";
 import { useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import axios from "axios";
 
 const DailyExpenses = () => {
   const token = localStorage.getItem("token");
+  const rows = useSelector((state) => state.expense.rows);
   const [filterExpenses, setFilterExpenses] = useState([]);
   const [pages, setPages] = useState(1);
   const [page, setPage] = useState(1);
   const [filterby, setFilterby] = useState("");
+
   let sum = 0;
   const date = useRef();
   const days = {
@@ -49,30 +52,30 @@ const DailyExpenses = () => {
     if (currentDate) {
       const res = await axios.post(
         `http://localhost:4000/expense/filterby/${currentDate}`,
-        { page: 1, filterValue },
+        { page: 1, filterValue, rows },
         {
           headers: { Authorization: token },
         }
       );
       setFilterExpenses(res.data.expense);
-      setPages(Math.ceil(res.data.count / 10));
+      setPages(Math.ceil(res.data.count / rows));
     }
   };
 
-  const getFilteredExpenses = async (pageNumber) => {
+  async function getFilteredExpenses(pageNumber) {
     setPage(pageNumber);
     const currentDate = date.current.value;
     if (currentDate) {
       const res = await axios.post(
         `http://localhost:4000/expense/filterby/${currentDate}`,
-        { page: pageNumber, filterValue: filterby },
+        { page: pageNumber, filterValue: filterby, rows },
         {
           headers: { Authorization: token },
         }
       );
       setFilterExpenses(res.data.expense);
     }
-  };
+  }
 
   const previous = () => {
     getFilteredExpenses(page - 1);
@@ -156,19 +159,20 @@ const DailyExpenses = () => {
             </tbody>
           </table>
         </div>
-      </div>
-      <div>
-        <button onClick={previous} disabled={page > 1 ? false : true}>
-          {"<"}
-        </button>
-        <button onClick={() => getFilteredExpenses(page)}>{page}</button>
-        {page < pages - 1 && <span>...</span>}
-        {page < pages && (
-          <button onClick={() => getFilteredExpenses(pages)}>{pages}</button>
-        )}
-        <button onClick={next} disabled={page < pages ? false : true}>
-          {">"}
-        </button>
+
+        <div>
+          <button onClick={previous} disabled={page > 1 ? false : true}>
+            {"<"}
+          </button>
+          <button onClick={() => getFilteredExpenses(page)}>{page}</button>
+          {page < pages - 1 && <span>...</span>}
+          {page < pages && (
+            <button onClick={() => getFilteredExpenses(pages)}>{pages}</button>
+          )}
+          <button onClick={next} disabled={page < pages ? false : true}>
+            {">"}
+          </button>
+        </div>
       </div>
     </div>
   );

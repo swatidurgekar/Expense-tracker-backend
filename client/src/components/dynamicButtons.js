@@ -1,19 +1,22 @@
 import axios from "axios";
-import React from "react";
+import React, { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { expenseActions } from "../store/Premium";
 
 const DynamicButtons = () => {
   const token = localStorage.getItem("token");
+  const rows = useSelector((state) => state.expense.rows);
   const page = useSelector((state) => state.expense.page);
   const numberOfPages = useSelector((state) => state.expense.pages);
   const dispatch = useDispatch();
+  const selectedRows = useRef();
 
   //function to get expenses
   const getExpenses = async (pageNumber) => {
     dispatch(expenseActions.setPage(pageNumber));
-    const expense = await axios.get(
+    const expense = await axios.post(
       `http://localhost:4000/expense/pagination/${pageNumber}`,
+      { rows },
       {
         headers: { Authorization: token },
       }
@@ -29,13 +32,27 @@ const DynamicButtons = () => {
     getExpenses(page - 1);
   };
 
+  const setRowsPerPage = () => {
+    dispatch(expenseActions.setRows(selectedRows.current.value));
+    localStorage.setItem("rows", selectedRows.current.value);
+  };
+
   return (
     <div>
+      <div>
+        <span>Rows per page: </span>
+        <select value={rows} ref={selectedRows} onChange={setRowsPerPage}>
+          <option>10</option>
+          <option>25</option>
+          <option>50</option>
+          <option>100</option>
+        </select>
+      </div>
       <button onClick={previous} disabled={page === 1 ? true : false}>
         {"<"}
       </button>
       <button onClick={() => getExpenses(page)}>{page}</button>
-      {page !== numberOfPages - 1 && page < numberOfPages && <span>...</span>}
+      {page < numberOfPages - 1 && <span>...</span>}
       {page < numberOfPages && (
         <button onClick={() => getExpenses(numberOfPages)}>
           {numberOfPages}

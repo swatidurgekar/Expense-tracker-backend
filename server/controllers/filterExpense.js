@@ -4,8 +4,8 @@ const extractDate = (date) => {
   return new Date(date);
 };
 
-const sliceFunction = (filteredExpenses, page, res) => {
-  const slicedExpenses = filteredExpenses.slice((page - 1) * 10, page * 10);
+const sliceFunction = (filteredExpenses, page, rows, res) => {
+  const slicedExpenses = filteredExpenses.slice((page - 1) * rows, page * rows);
   res.status(200).json({
     success: true,
     expense: slicedExpenses,
@@ -45,5 +45,5 @@ exports.filterby = async (req, res, next) => {
     });
   }
 
-  sliceFunction(filteredExpenses, req.body.page, res);
+  sliceFunction(filteredExpenses, req.body.page, req.body.rows, res);
 };
