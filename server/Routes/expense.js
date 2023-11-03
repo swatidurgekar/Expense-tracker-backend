@@ -4,19 +4,18 @@ const router = express.Router();
 const expenseController = require("../controllers/expense");
 const authentication = require("../middleware/auth");
 const downloadExpenseController = require("../controllers/downloadExpense");
+const filterExpenseController = require("../controllers/filterExpense");
 
 router.post(
   "/postAddExpense",
   authentication,
   expenseController.postAddExpense
 );
-router.get("/get-expenses", authentication, expenseController.getExpenses);
 router.get(
   "/delete-expense/:id",
   authentication,
   expenseController.deleteExpense
 );
-router.get("/daily-expenses", expenseController.dailyExpenses);
 router.get(
   "/download",
   authentication,
@@ -26,5 +25,16 @@ router.get(
   "/get-download",
   authentication,
   downloadExpenseController.getDownloadExpenses
+);
+router.post(
+  "/filterby/:date",
+  authentication,
+  filterExpenseController.filterby
+);
+router.get("/countExpense", authentication, expenseController.countExpenses);
+router.get(
+  "/pagination/:page",
+  authentication,
+  expenseController.paginatingExpenses
 );
 module.exports = router;

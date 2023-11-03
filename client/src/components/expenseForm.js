@@ -6,11 +6,13 @@ import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
 import { useSelector, useDispatch } from "react-redux";
 import { expenseActions, premiumActions } from "../store/Premium";
 import { NavLink } from "react-router-dom";
+import DynamicButtons from "./dynamicButtons";
 
 const ExpenseForm = () => {
   const Razorpay = window.Razorpay;
   const expenses = useSelector((state) => state.expense.expenses);
   const premium = useSelector((state) => state.premium.isPremiumUser);
+  const page = useSelector((state) => state.expense.page);
   const token = localStorage.getItem("token");
   const [leaderboard, setLeaderboard] = useState([]);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
@@ -21,7 +23,18 @@ const ExpenseForm = () => {
 
   useEffect(() => {
     leaderboardFunc();
+
+    countExpenses();
   }, [token, dispatch]);
+
+  async function countExpenses() {
+    const response = await axios.get(
+      "http://localhost:4000/expense/countExpense",
+      { headers: { Authorization: token } }
+    );
+    const pages = response.data.pages;
+    dispatch(expenseActions.setPages(pages));
+  }
 
   async function leaderboardFunc() {
     const response = await axios.get(
@@ -31,14 +44,21 @@ const ExpenseForm = () => {
     setLeaderboard(arr);
   }
 
-  const deleteExpense = async (id) => {
+  const paginatingExpenses = async () => {
     const res = await axios.get(
-      `http://localhost:4000/expense/delete-expense/${id}`,
+      `http://localhost:4000/expense/pagination/${page}`,
       { headers: { Authorization: token } }
     );
-    const remexpenses = await res.data;
-    dispatch(expenseActions.setExpenses(remexpenses));
+    dispatch(expenseActions.setExpenses(res.data.expensesSlice));
+    countExpenses();
     leaderboardFunc();
+  };
+
+  const deleteExpense = async (id) => {
+    await axios.get(`http://localhost:4000/expense/delete-expense/${id}`, {
+      headers: { Authorization: token },
+    });
+    paginatingExpenses();
   };
 
   const submitHandler = async (e) => {
@@ -47,20 +67,12 @@ const ExpenseForm = () => {
     const description = des.current.value;
     const category = cat.current.value;
     const date = new Date();
-    console.log(date);
     const obj = { price, description, category, date };
-    const res = await axios.post(
-      "http://localhost:4000/expense/postAddExpense",
-      obj,
-      {
-        headers: { Authorization: token },
-      }
-    );
-    if (res) {
-      const expenses = res.data;
-      dispatch(expenseActions.setExpenses(expenses));
-      leaderboardFunc();
-    }
+    await axios.post("http://localhost:4000/expense/postAddExpense", obj, {
+      headers: { Authorization: token },
+    });
+
+    paginatingExpenses();
   };
 
   const buyPremium = async () => {
@@ -104,7 +116,7 @@ const ExpenseForm = () => {
     setShowLeaderboard((prevValue) => !prevValue);
   };
 
-  const download = async (event) => {
+  const download = async () => {
     const res = await axios.get("http://localhost:4000/expense/download", {
       headers: { Authorization: token },
     });
@@ -123,7 +135,7 @@ const ExpenseForm = () => {
   };
 
   return (
-    <>
+    <div className="expense-form">
       <div className="buttons">
         {!premium && (
           <div className="premium-btn">
@@ -199,47 +211,54 @@ const ExpenseForm = () => {
           </button>
         </form>
       </div>
-      <div className="expenseform-expenses-div">
-        <div>
-          <h2 className="expenseform-h2">Expenses</h2>
-          <table className="expenseform-table">
-            <thead>
-              <tr className="expenseform-table-row">
-                <th className="expenseform-table-header">Description</th>
-                <th className="expenseform-table-header">Category</th>
-                <th className="expenseform-table-header">Price</th>
-                <th className="expenseform-table-header">Delete</th>
-              </tr>
-            </thead>
-            <tbody>
-              {expenses.map((expense) => {
-                return (
-                  <tr key={expense.id} className="expenseform-table-row">
-                    <td className="expenseform-table-data">
-                      {expense.description}
-                    </td>
+      <div className="expense-table">
+        <div className="expenseform-expenses-div">
+          <div>
+            <h2 className="expenseform-h2">Expenses</h2>
+            <table className="expenseform-table">
+              <thead>
+                <tr className="expenseform-table-row">
+                  <th className="expenseform-table-header">Description</th>
+                  <th className="expenseform-table-header">Category</th>
+                  <th className="expenseform-table-header">Price</th>
+                  <th className="expenseform-table-header">Delete</th>
+                </tr>
+              </thead>
+              <tbody>
+                {expenses.map((expense, index) => {
+                  return (
+                    <tr key={expense.id} className="expenseform-table-row">
+                      <td className="expenseform-table-data">
+                        {expense.description}
+                      </td>
 
-                    <td className="expenseform-table-data">
-                      {expense.category}
-                    </td>
+                      <td className="expenseform-table-data">
+                        {expense.category}
+                      </td>
 
-                    <td className="expenseform-table-data">{expense.price}</td>
+                      <td className="expenseform-table-data">
+                        {expense.price}
+                      </td>
 
-                    <td
-                      onClick={() => deleteExpense(expense.id)}
-                      className="expenseform-table-data"
-                    >
-                      <DeleteIcon style={{ color: "red" }} />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                      <td
+                        onClick={() => deleteExpense(expense.id)}
+                        className="expenseform-table-data"
+                      >
+                        <DeleteIcon style={{ color: "red" }} />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          {premium && <button onClick={download}>Download</button>}
         </div>
-        {premium && <button onClick={download}>Download</button>}
+        <div>
+          <DynamicButtons />
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

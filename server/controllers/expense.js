@@ -1,5 +1,6 @@
 const Expense = require("../models/expenseModel");
 const sequelize = require("../util/database");
+const UserServices = require("../services/userservices");
 
 exports.postAddExpense = async (req, res, next) => {
   const t = await sequelize.transaction();
@@ -28,20 +29,11 @@ exports.postAddExpense = async (req, res, next) => {
       );
       await Promise.all([createExpense, updateUser]);
       await t.commit();
-      const expenses = await req.user.getExpenses();
-      res.json(expenses);
+      res.status(200).json({ success: true });
     }
   } catch (err) {
     await t.rollback();
     console.log(err);
-  }
-};
-
-exports.getExpenses = async (req, res, next) => {
-  const user = req.user;
-  if (user) {
-    const expenses = await user.getExpenses();
-    res.json({ expense: expenses });
   }
 };
 
@@ -59,8 +51,7 @@ exports.deleteExpense = async (req, res, next) => {
       );
       await Promise.all([destroyExpense, updateUser]);
       await t.commit();
-      const expenses = await user.getExpenses();
-      res.json(expenses);
+      res.status(200).json({ success: true });
     }
   } catch (err) {
     await t.rollback();
@@ -68,11 +59,15 @@ exports.deleteExpense = async (req, res, next) => {
   }
 };
 
-exports.dailyExpenses = (req, res, next) => {
-  try {
-    console.log("redirect");
-    res.status(200).redirect("http://localhost:3000/expense/daily-expenses");
-  } catch (err) {
-    console.log(err);
-  }
+exports.countExpenses = async (req, res, next) => {
+  const expenses = await UserServices.getExpenses(req);
+  const pages = Math.ceil(expenses.length / 10);
+  res.json({ pages });
+};
+
+exports.paginatingExpenses = async (req, res, next) => {
+  const { page } = req.params;
+  const expenses = await UserServices.getExpenses(req);
+  const expensesSlice = expenses.slice((page - 1) * 10, page * 10);
+  res.json({ expensesSlice });
 };

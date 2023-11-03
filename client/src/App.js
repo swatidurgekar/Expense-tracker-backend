@@ -19,13 +19,14 @@ function App() {
 
   useEffect(() => {
     if (token) {
+      dispatch(expenseActions.setPage(1));
       async function getExpenses() {
         const res = await axios.get(
-          "http://localhost:4000/expense/get-expenses",
+          `http://localhost:4000/expense/pagination/1`,
           { headers: { Authorization: token } }
         );
-        if (res && res.data && res.data.expense) {
-          const expenses = res.data.expense;
+        if (res && res.data && res.data.expensesSlice) {
+          const expenses = res.data.expensesSlice;
           dispatch(expenseActions.setExpenses(expenses));
         }
       }

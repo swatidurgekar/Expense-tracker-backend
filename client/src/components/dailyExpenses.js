@@ -1,10 +1,13 @@
 import styles from "../css/dailyExpenses.module.css";
-import { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useRef, useState } from "react";
+import axios from "axios";
 
 const DailyExpenses = () => {
-  const expenses = useSelector((state) => state.expense.expenses);
-  const [filterExpenses, setFilterExpenses] = useState(expenses);
+  const token = localStorage.getItem("token");
+  const [filterExpenses, setFilterExpenses] = useState([]);
+  const [pages, setPages] = useState(1);
+  const [page, setPage] = useState(1);
+  const [filterby, setFilterby] = useState("");
   let sum = 0;
   const date = useRef();
   const days = {
@@ -31,10 +34,6 @@ const DailyExpenses = () => {
     11: "Dec",
   };
 
-  useEffect(() => {
-    setFilterExpenses(expenses);
-  }, [expenses]);
-
   filterExpenses.forEach((expense) => {
     sum += expense.price;
   });
@@ -43,38 +42,44 @@ const DailyExpenses = () => {
     return new Date(date);
   };
 
-  const filterByDay = () => {
-    const newFilteredDate = extractDate(date.current.value);
-    const filteredExpenses = expenses.filter((expense) => {
-      const expenseDate = extractDate(expense.date);
-      return (
-        newFilteredDate.getDate() === expenseDate.getDate() &&
-        newFilteredDate.getMonth() === expenseDate.getMonth() &&
-        newFilteredDate.getFullYear() === expenseDate.getFullYear()
+  const filterByFunction = async (filterValue) => {
+    setPage(1);
+    setFilterby(filterValue);
+    const currentDate = date.current.value;
+    if (currentDate) {
+      const res = await axios.post(
+        `http://localhost:4000/expense/filterby/${currentDate}`,
+        { page: 1, filterValue },
+        {
+          headers: { Authorization: token },
+        }
       );
-    });
-    setFilterExpenses(filteredExpenses);
+      setFilterExpenses(res.data.expense);
+      setPages(Math.ceil(res.data.count / 10));
+    }
   };
 
-  const filterByMonth = () => {
-    const newFilteredDate = extractDate(date.current.value);
-    const filteredExpenses = expenses.filter((expense) => {
-      const expenseDate = extractDate(expense.date);
-      return (
-        newFilteredDate.getMonth() === expenseDate.getMonth() &&
-        newFilteredDate.getFullYear() === expenseDate.getFullYear()
+  const getFilteredExpenses = async (pageNumber) => {
+    setPage(pageNumber);
+    const currentDate = date.current.value;
+    if (currentDate) {
+      const res = await axios.post(
+        `http://localhost:4000/expense/filterby/${currentDate}`,
+        { page: pageNumber, filterValue: filterby },
+        {
+          headers: { Authorization: token },
+        }
       );
-    });
-    setFilterExpenses(filteredExpenses);
+      setFilterExpenses(res.data.expense);
+    }
   };
 
-  const filterByYear = () => {
-    const newFilteredDate = extractDate(date.current.value);
-    const filteredExpenses = expenses.filter((expense) => {
-      const expenseDate = extractDate(expense.date);
-      return newFilteredDate.getFullYear() === expenseDate.getFullYear();
-    });
-    setFilterExpenses(filteredExpenses);
+  const previous = () => {
+    getFilteredExpenses(page - 1);
+  };
+
+  const next = () => {
+    getFilteredExpenses(page + 1);
   };
 
   return (
@@ -92,9 +97,15 @@ const DailyExpenses = () => {
               <input name="date" type="date" ref={date} />
             </div>
             <div>
-              <button onClick={filterByDay}>Filter by date</button>
-              <button onClick={filterByMonth}>Filter by month</button>
-              <button onClick={filterByYear}>Filter by year</button>
+              <button onClick={() => filterByFunction("day")}>
+                Filter by date
+              </button>
+              <button onClick={() => filterByFunction("month")}>
+                Filter by month
+              </button>
+              <button onClick={() => filterByFunction("year")}>
+                Filter by year
+              </button>
             </div>
           </div>
           <div className={styles.totalExpenses}>
@@ -145,6 +156,19 @@ const DailyExpenses = () => {
             </tbody>
           </table>
         </div>
+      </div>
+      <div>
+        <button onClick={previous} disabled={page > 1 ? false : true}>
+          {"<"}
+        </button>
+        <button onClick={() => getFilteredExpenses(page)}>{page}</button>
+        {page < pages - 1 && <span>...</span>}
+        {page < pages && (
+          <button onClick={() => getFilteredExpenses(pages)}>{pages}</button>
+        )}
+        <button onClick={next} disabled={page < pages ? false : true}>
+          {">"}
+        </button>
       </div>
     </div>
   );
