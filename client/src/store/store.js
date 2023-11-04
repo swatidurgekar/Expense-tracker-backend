@@ -1,8 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { expenseReducer, premiumReducer } from "./Premium";
+import { expenseReducer, loginReducer, premiumReducer } from "./Premium";
 
 const store = configureStore({
-  reducer: { premium: premiumReducer, expense: expenseReducer },
+  reducer: {
+    premium: premiumReducer,
+    login: loginReducer,
+    expense: expenseReducer,
+  },
 });
 
 export default store;

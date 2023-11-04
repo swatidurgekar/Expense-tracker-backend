@@ -34,7 +34,7 @@ exports.postSignUpForm = (req, res, next) => {
       }
     });
   } catch (err) {
-    return res.status(500).json({ message: "user exists" });
+    res.status(500).json({ message: "user exists" });
   }
 };
 
@@ -50,25 +50,25 @@ exports.postLoginForm = async (req, res, next) => {
       if (!string) return true;
     };
     if (stringValidation(username) || stringValidation(password)) {
-      return res.status(500).json({ message: "please fill all fields!" });
+      res.status(500).json({ message: "please fill all fields!" });
     }
     const user = await User.findAll({ where: { username } });
     if (user.length > 0) {
       if (user[0].username === username) {
         bcrypt.compare(password, user[0].password, (err, result) => {
-          if (err)
-            return res.status(500).json({ message: "something went wrong" });
+          if (err) res.status(500).json({ message: "something went wrong" });
           else if (result) {
             const token = generateAccessToken(user[0].id);
-            return res.json(token);
-            // res.redirect("http://localhost:3000/expense/add-expenses");
+            res.status(200).json({ success: true, token });
           } else {
-            return res.status(400).json("incorrect password");
+            res
+              .status(500)
+              .json({ success: false, message: "incorrect password" });
           }
         });
       }
     } else {
-      return res.status(500).json({ message: "user not found!" });
+      res.status(500).json({ success: false, message: "user not found!" });
     }
   } catch (err) {
     console.log(err.message);

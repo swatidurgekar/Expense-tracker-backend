@@ -17,6 +17,7 @@ function App() {
   const dispatch = useDispatch();
   const token = localStorage.getItem("token");
   const rows = useSelector((state) => state.expense.rows);
+  const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
 
   useEffect(() => {
     if (!rows) {
@@ -57,17 +58,24 @@ function App() {
     <div className="App">
       <Routes>
         <Route path="/" element={<SignUpForm />} />
+
         <Route path="/login" element={<LoginForm />} />
+
         <Route path="/forgotPassword" element={<ForgotPasswordForm />} />
+
         <Route
           path="/updatePassword/:requestId"
           element={<UpdatePasswordForm />}
         />
-        <Route path="/expense/add-expenses" element={<ExpenseForm />} />
-        {premium && (
+        {isLoggedIn && (
+          <Route path="/expense/add-expenses" element={<ExpenseForm />} />
+        )}
+        {premium && isLoggedIn && (
           <Route path="/expense/daily-expenses" element={<DailyExpenses />} />
         )}
-        {premium && <Route path="/expense/downloads" element={<Downloads />} />}
+        {premium && isLoggedIn && (
+          <Route path="/expense/downloads" element={<Downloads />} />
+        )}
       </Routes>
     </div>
   );

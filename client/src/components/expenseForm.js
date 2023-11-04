@@ -23,6 +23,19 @@ const ExpenseForm = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    async function checkPremium() {
+      console.log("check premium");
+      const response = await axios.get(
+        "http://localhost:4000/purchase/checkPremium",
+        { headers: { Authorization: token } }
+      );
+      if (response.data) {
+        dispatch(premiumActions.setPremium(true));
+      } else {
+        dispatch(premiumActions.setPremium(false));
+      }
+    }
+    checkPremium();
     leaderboardFunc();
     paginatingExpenses();
     countExpenses();
@@ -99,7 +112,6 @@ const ExpenseForm = () => {
           },
           { headers: { Authorization: token } }
         );
-        console.log(successMessage);
       },
     });
     rzp.open();

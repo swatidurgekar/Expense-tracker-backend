@@ -2,21 +2,31 @@ import { useRef } from "react";
 import "../css/signUpForm.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { loginActions } from "../store/Premium";
 
 const LoginForm = () => {
   const uname = useRef();
   const pword = useRef();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const submitHandler = async (e) => {
-    e.preventDefault();
-    const username = uname.current.value;
-    const password = pword.current.value;
-    const obj = { username, password };
-    const res = await axios.post("http://localhost:4000/user/login", obj);
-    if (res) {
-      localStorage.setItem("token", res.data);
-      navigate("/expense/add-expenses");
+    try {
+      e.preventDefault();
+      const username = uname.current.value;
+      const password = pword.current.value;
+      const obj = { username, password };
+      const res = await axios.post("http://localhost:4000/user/login", obj);
+      if (res.data.success) {
+        localStorage.setItem("token", res.data.token);
+        dispatch(loginActions.setLogin());
+        navigate("/expense/add-expenses");
+      } else {
+        throw new Error(res);
+      }
+    } catch (err) {
+      alert(err.response.data.message);
     }
   };
 
