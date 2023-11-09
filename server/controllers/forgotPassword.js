@@ -13,7 +13,7 @@ apiKey.apiKey = process.env.API_KEY;
 const tranEmailApi = new Sib.TransactionalEmailsApi();
 
 const sender = {
-  email: "swatidurgekar@gmail.com",
+  email: process.env.SENDER_EMAIL,
 };
 
 exports.forgotPassword = async (req, res, next) => {
@@ -78,9 +78,16 @@ exports.resetPassword = async (req, res, next) => {
 };
 
 exports.updatePassword = async (req, res, next) => {
+  const t = await sequelize.transaction();
   try {
     const { requestId } = req.params;
-    const { password1 } = req.body;
+    const { password1, password2 } = req.body;
+    if (password1 !== password2) {
+      return res.status(500).json({
+        success: false,
+        message: "passwords do not match. Enter same password for both fields",
+      });
+    }
     const request = await ForgotPassword.findByPk(requestId);
     if (request && request.isActive) {
       const user = await request.getUser();
@@ -92,19 +99,28 @@ exports.updatePassword = async (req, res, next) => {
             throw new Error();
           } else {
             try {
-              await user.update({ password: hashValue });
-              await request.update({ isActive: false });
+              const changePassword = user.update(
+                { password: hashValue },
+                { transaction: t }
+              );
+              const updateRequest = request.update(
+                { isActive: false },
+                { transaction: t }
+              );
+              await Promise.all([changePassword, updateRequest]);
+              await t.commit();
               res.redirect("http://localhost:3000/login");
             } catch (err) {
-              console.log(err);
+              await t.rollback();
             }
           }
         });
       }
     } else {
-      res.json({ message: "request expired!" });
+      await t.rollback();
+      res.status(500).json({ message: "request expired!" });
     }
   } catch (err) {
-    console.log(err);
+    await t.rollback();
   }
 };

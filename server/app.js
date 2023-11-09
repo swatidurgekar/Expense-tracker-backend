@@ -5,9 +5,9 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const fs = require("fs");
 
+require("dotenv").config();
 const sequelize = require("./util/database");
 const bodyParser = require("body-parser");
-require("dotenv").config();
 
 const app = express();
 
