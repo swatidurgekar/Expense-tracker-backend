@@ -26,7 +26,7 @@ function App() {
       dispatch(expenseActions.setPage(1));
       async function getExpenses() {
         const res = await axios.post(
-          `http://localhost:4000/expense/pagination/1`,
+          `http://13.51.234.248:3001/expense/pagination/1`,
           { rows },
           { headers: { Authorization: token } }
         );
@@ -38,7 +38,7 @@ function App() {
 
       async function checkPremium() {
         const response = await axios.get(
-          "http://localhost:4000/purchase/checkPremium",
+          "http://13.51.234.248:3001/purchase/checkPremium",
           { headers: { Authorization: token } }
         );
         if (response.data) {
@@ -48,8 +48,8 @@ function App() {
         }
       }
 
-      getExpenses();
-      checkPremium();
+      // getExpenses();
+      // checkPremium();
     }
   }, [token, dispatch]);
 

@@ -13,9 +13,9 @@ const LoginForm = () => {
     const username = uname.current.value;
     const password = pword.current.value;
     const obj = { username, password };
-    const res = await axios.post("http://localhost:4000/user/login", obj);
+    const res = await axios.post("http://13.51.234.248:3001/user/login", obj);
     if (res) {
-      localStorage.setItem("token", res.data);
+      localStorage.setItem("token", res.data.token);
       navigate("/expense/add-expenses");
     }
   };

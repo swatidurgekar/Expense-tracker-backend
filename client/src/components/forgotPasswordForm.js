@@ -10,7 +10,7 @@ const ForgotPasswordForm = () => {
     event.preventDefault();
     const email = emailRef.current.value;
     const res = await axios.post(
-      "http://localhost:4000/password/forgotPassword",
+      "http://13.51.234.248:3001/password/forgotPassword",
       { email },
       { headers: { Authorization: token } }
     );

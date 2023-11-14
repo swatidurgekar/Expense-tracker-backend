@@ -15,7 +15,7 @@ const DynamicButtons = () => {
   const getExpenses = async (pageNumber) => {
     dispatch(expenseActions.setPage(pageNumber));
     const expense = await axios.post(
-      `http://localhost:4000/expense/pagination/${pageNumber}`,
+      `http://13.51.234.248:3001/expense/pagination/${pageNumber}`,
       { rows },
       {
         headers: { Authorization: token },

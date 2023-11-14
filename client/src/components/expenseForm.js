@@ -30,7 +30,7 @@ const ExpenseForm = () => {
 
   async function countExpenses() {
     const response = await axios.post(
-      "http://localhost:4000/expense/countExpense",
+      "http://13.51.234.248:3001/expense/countExpense",
       { rows },
       { headers: { Authorization: token } }
     );
@@ -40,7 +40,7 @@ const ExpenseForm = () => {
 
   async function leaderboardFunc() {
     const response = await axios.get(
-      "http://localhost:4000/purchase/leaderboard"
+      "http://13.51.234.248:3001/purchase/leaderboard"
     );
     const arr = response.data;
     setLeaderboard(arr);
@@ -48,7 +48,7 @@ const ExpenseForm = () => {
 
   const paginatingExpenses = async () => {
     const res = await axios.post(
-      `http://localhost:4000/expense/pagination/${page}`,
+      `http://13.51.234.248:3001/expense/pagination/${page}`,
       { rows },
       { headers: { Authorization: token } }
     );
@@ -58,7 +58,7 @@ const ExpenseForm = () => {
   };
 
   const deleteExpense = async (id) => {
-    await axios.get(`http://localhost:4000/expense/delete-expense/${id}`, {
+    await axios.get(`http://13.51.234.248:3001/expense/delete-expense/${id}`, {
       headers: { Authorization: token },
     });
     paginatingExpenses();
@@ -71,7 +71,7 @@ const ExpenseForm = () => {
     const category = cat.current.value;
     const date = new Date();
     const obj = { price, description, category, date };
-    await axios.post("http://localhost:4000/expense/postAddExpense", obj, {
+    await axios.post("http://13.51.234.248:3001/expense/postAddExpense", obj, {
       headers: { Authorization: token },
     });
 
@@ -80,7 +80,7 @@ const ExpenseForm = () => {
 
   const buyPremium = async () => {
     const response = await axios.get(
-      "http://localhost:4000/purchase/buypremium",
+      "http://13.51.234.248:3001/purchase/buypremium",
       {
         headers: { Authorization: token },
       }
@@ -92,7 +92,7 @@ const ExpenseForm = () => {
         dispatch(premiumActions.setPremium(true));
         alert("Transaction success!!");
         const successMessage = await axios.post(
-          "http://localhost:4000/purchase/updatePremiumStatus",
+          "http://13.51.234.248:3001/purchase/updatePremiumStatus",
           {
             order_id: response.data.order.id,
             payment_id: res.razorpay_payment_id,
@@ -106,7 +106,7 @@ const ExpenseForm = () => {
     rzp.on("payment.failed", async (res) => {
       alert("Transaction failed!!");
       await axios.post(
-        "http://localhost:4000/purchase/transactionFailed",
+        "http://13.51.234.248:3001/purchase/transactionFailed",
         { order_id: response.data.order.id },
         {
           headers: { Authorization: token },
@@ -120,7 +120,7 @@ const ExpenseForm = () => {
   };
 
   const download = async () => {
-    const res = await axios.get("http://localhost:4000/expense/download", {
+    const res = await axios.get("http://13.51.234.248:3001/expense/download", {
       headers: { Authorization: token },
     });
     try {

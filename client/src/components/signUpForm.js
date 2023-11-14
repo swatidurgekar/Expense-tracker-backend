@@ -7,7 +7,7 @@ const SignUpForm = () => {
         <h1 className="signupform-h1">SignUp</h1>
         <form
           className="signupform-form"
-          action="http://localhost:4000/user/signUp"
+          action="http://13.51.234.248:3001/user/signUp"
           method="POST"
         >
           <label htmlFor="name">Name</label>

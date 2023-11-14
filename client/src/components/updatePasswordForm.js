@@ -14,7 +14,7 @@ const UpdatePasswordForm = () => {
         <p className="updatePassword-p">Change Password:</p>
         <p className="resetForm-p">Enter a new password.</p>
         <form
-          action={`http://localhost:4000/password/updatePassword/${requestId}`}
+          action={`http://13.51.234.248:3001/password/updatePassword/${requestId}`}
           className="updatePassword-form"
           method="POST"
         >
