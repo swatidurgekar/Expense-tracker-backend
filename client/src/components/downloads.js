@@ -9,7 +9,7 @@ const Downloads = () => {
   useEffect(() => {
     const getDownloads = async () => {
       const response = await axios.get(
-        "http://13.51.234.248:3001/expense/get-download",
+        "http://13.53.182.149:4000/expense/get-download",
         {
           headers: { Authorization: token },
         }

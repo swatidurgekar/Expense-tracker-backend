@@ -51,7 +51,7 @@ const DailyExpenses = () => {
     const currentDate = date.current.value;
     if (currentDate) {
       const res = await axios.post(
-        `http://13.51.234.248:3001/expense/filterby/${currentDate}`,
+        `http://13.53.182.149:4000/expense/filterby/${currentDate}`,
         { page: 1, filterValue, rows },
         {
           headers: { Authorization: token },
@@ -67,7 +67,7 @@ const DailyExpenses = () => {
     const currentDate = date.current.value;
     if (currentDate) {
       const res = await axios.post(
-        `http://13.51.234.248:3001/expense/filterby/${currentDate}`,
+        `http://13.53.182.149:4000/expense/filterby/${currentDate}`,
         { page: pageNumber, filterValue: filterby, rows },
         {
           headers: { Authorization: token },
