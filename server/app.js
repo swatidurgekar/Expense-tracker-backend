@@ -29,7 +29,6 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/expense", expenseRoutes);
 app.use("/purchase", purchaseRoutes);
 app.use("/password", passwordRoutes);
-app.use(express.static(path.join(__dirname, "client")));
 app.use(userRoutes);
 
 User.hasMany(Expense);
