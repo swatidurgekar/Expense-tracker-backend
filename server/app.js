@@ -2,9 +2,9 @@ const path = require("path");
 const express = require("express");
 var cors = require("cors");
 
+require("dotenv").config();
 const sequelize = require("./util/database");
 const bodyParser = require("body-parser");
-require("dotenv").config();
 
 const app = express();
 
@@ -29,6 +29,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/expense", expenseRoutes);
 app.use("/purchase", purchaseRoutes);
 app.use("/password", passwordRoutes);
+app.use(express.static(path.join(__dirname, "client")));
 app.use(userRoutes);
 
 User.hasMany(Expense);
@@ -43,10 +44,12 @@ ResetPassword.belongsTo(User);
 User.hasMany(Download);
 Download.belongsTo(User);
 
+console.log("password", process.env.DATABASE_USERNAME);
+
 sequelize
   .sync()
   .then(() => {
-    app.listen("4000");
+    app.listen("3001");
   })
   .catch((err) => {
     console.log(err);
